@@ -38,15 +38,16 @@ def extract_data(image):
 
 # Convert to FeatureCollection
 rainfall_data = rainfall.map(extract_data)
+print(rainfall_data)
 
 # Export to Google Drive
-task = ee.batch.Export.table.toDrive(
-    collection=rainfall_data,
-    description='Rainfall_Data_Export',
-    fileFormat='CSV',
-    folder='EarthEngineExports'
-)
+# task = ee.batch.Export.table.toDrive(
+#     collection=rainfall_data,
+#     description='Rainfall_Data_Export',
+#     fileFormat='CSV',
+#     folder='EarthEngineExports'
+# )
 
-# Start the task automatically
-task.start()
-print("Export task started successfully!")
+# # Start the task automatically
+# task.start()
+# print("Export task started successfully!")
