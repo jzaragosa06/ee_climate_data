@@ -12,6 +12,9 @@ Extracting climatic variables from Google Earth Engine using Python API
 pip install -r requirements.txt
 ```
 
+4. Create a project on Google Earth Engine
+5. Authenticate on your computer by running the `authenticate.py`.
+
 | ![Image 1](/public/NOAA_CPC_Precipitation_sample.png) | ![Image 2](/public/NOAA_CPC_Precipitation_sample.png) |
 | ----------------------------------------------------- | ----------------------------------------------------- |
 
