@@ -26,7 +26,6 @@ collection_name = 'NOAA/CPC/Precipitation'
 band_name = 'precipitation'
 resolution = 55500  # in meters
 
-
 # Extract data function
 def extract_data(image):
     date = ee.Date(image.get('system:time_start')).format('YYYY-MM-dd')
