@@ -5,14 +5,11 @@ ee.Authenticate()
 # Initialize the library.
 ee.Initialize(project='ee-zukozaragosa2003')
 
-
-
 # Define AOI
-geometry = ee.Geometry.Polygon(
-    [[[-102.0115234375, 40.045027965879555],
-      [-102.0115234375, 37.09085497132735],
-      [-94.584765625, 37.09085497132735],
-      [-94.584765625, 40.045027965879555]]])
+geometry = ee.Geometry.Polygon([[[120.29625115806084, 16.04828714904824],
+          [120.29625115806084, 15.826442458884308],
+          [120.53383050376397, 15.826442458884308],
+          [120.53383050376397, 16.04828714904824]]])
 
 # Define parameters
 start_date = '2011-01-01'
@@ -41,13 +38,13 @@ rainfall_data = rainfall.map(extract_data)
 print(rainfall_data)
 
 # Export to Google Drive
-# task = ee.batch.Export.table.toDrive(
-#     collection=rainfall_data,
-#     description='Rainfall_Data_Export',
-#     fileFormat='CSV',
-#     folder='EarthEngineExports'
-# )
+task = ee.batch.Export.table.toDrive(
+    collection=rainfall_data,
+    description='dagupan',
+    fileFormat='CSV',
+    folder='EarthEngineExports'
+)
 
-# # Start the task automatically
-# task.start()
-# print("Export task started successfully!")
+# Start the task automatically
+task.start()
+print("Export task started successfully!")

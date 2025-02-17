@@ -56,27 +56,25 @@ for province, boundary in province_boundaries.items():
 
         # Convert GEE response to pandas DataFrame
         data = []
-        date = None
-        precipitation = None
         for feature in rainfall_data['features']:
             date = feature['properties']['date']
             precipitation = feature['properties']['precipitation']
+            data.append([date, precipitation])
 
+        province_name = province.replace(" ", "_") 
+        province_df = pd.DataFrame(data, columns=['date', province_name])
 
-        if "date" not in df.columns:
-            df["date"] = date
-            df[f"{province.replace(" ", "_")}"] = precipitation
+        if df.empty:
+            df = province_df
         else:
-            df[f"{province.replace(" ", "_")}"] = precipitation
-        pass
+            df = df.merge(province_df, on="date", how="outer")
     except Exception as e:
         print(f"failed to extract: {province}")
-        pass
     else:
         pass
 
 # Save locally as CSV
-csv_filename = "precipitation_all_province.csv"
+csv_filename = "precipitation_all_province_v2.csv"
 csv_path = os.path.join(output_folder, csv_filename)
 df.to_csv(csv_path, index=False)
 print(f"Saved: {csv_path}")

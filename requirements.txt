@@ -2,3 +2,4 @@ pandas
 ee
 plotly
 ee
+earthengine-api
