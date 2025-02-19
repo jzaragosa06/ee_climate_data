@@ -19,8 +19,8 @@ os.makedirs(output_folder, exist_ok=True)
 with open(boundaries_path, "r") as file:
     province_boundaries = json.load(file)
 
-start_date = '2007-01-01'
-end_date = '2012-01-01'
+start_date = '2008-01-01'
+end_date = '2025-02-15'
 collection_name = 'NOAA/CPC/Precipitation'
 band_name = 'precipitation'
 resolution = 55500  # in meters
