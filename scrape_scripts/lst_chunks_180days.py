@@ -58,7 +58,7 @@ for province, boundary in province_boundaries.items():
 
             rainfall = ee.ImageCollection(collection_name).filterDate(
                 current_start.strftime('%Y-%m-%d'), current_end.strftime('%Y-%m-%d')
-            ).select(band_name)
+            ).select(band_name, 'QC_Day')
 
             rainfall_data = rainfall.map(lambda img: extract_data(img, geometry)).getInfo()
 
@@ -87,7 +87,7 @@ for province, boundary in province_boundaries.items():
 
     except Exception as e:
         print(f"Failed to extract: {province}, Error: {str(e)}")
-\
+
 csv_filename = "LST_Day_1km.csv"
 csv_path = os.path.join(output_folder, csv_filename)
 df.to_csv(csv_path, index=False)
