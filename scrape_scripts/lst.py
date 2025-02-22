@@ -37,8 +37,12 @@ def reduce_image(image, geometry):
     ).get(band_name)
     return ee.Feature(None, {'date': date, band_name: mean_lst})
 
+df = pd.DataFrame()
+
 for province, boundary in province_boundaries.items():
     try:
+        province_name = province.replace(" ", "_")
+        
         print(f"processing...{province}")
         geometry = ee.Geometry.Polygon(boundary)
         current_start = start_date
@@ -55,24 +59,43 @@ for province, boundary in province_boundaries.items():
             time_series = lst.map(lambda img: reduce_image(image=img, geometry=geometry))
             df_temp = pd.DataFrame(time_series.getInfo()['features'])
             df_temp = pd.json_normalize(df_temp['properties'])
+            df_temp[band_name] = df_temp[band_name] * 0.02 - 273.15
             
             if province_df.empty:
                 province_df = df_temp
+                
             else:
                 province_df = pd.concat([province_df, df_temp], ignore_index=True)
         
             current_start = current_end
-        
-        province_df[band_name] = province_df[band_name] * 0.02 - 273.15
-        
         
         #temporary save
         csv_filename = f"lst_{province}.csv"
         csv_path = os.path.join(temporary_output_folder, csv_filename)
         province_df.to_csv(csv_path, index=False)
         print(f"{province} saved")
+        
+        
+        # save on just one df
+        if df.empty:
+            province_df = province_df.rename(columns={band_name: province_name})
+            df = province_df
+        else:
+            province_df = province_df.rename(columns={band_name: province_name})
+            df = df.merge(province_df, on="date", how="outer")
+
+        #temporary save of last
+        csv_filename = f"lst_-last-{province}.csv"
+        csv_path = os.path.join(output_folder, csv_filename)
+        df.to_csv(csv_path, index=False)
+        print(f"last-{province} saved")
     except Exception as e:
         print(f"error: {e}")
+
+csv_filename = f"lst_per_province_data_extracted_per_180days.csv"
+csv_path = os.path.join(output_folder, csv_filename)
+df.to_csv(csv_path, index=False)
+print(f"saved: {csv_path}")
 
     
     
