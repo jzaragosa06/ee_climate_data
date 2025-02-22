@@ -86,7 +86,7 @@ for province, boundary in province_boundaries.items():
 
     except Exception as e:
         print(f"Failed to extract: {province}, Error: {str(e)}")
-\
+
 csv_filename = "precipitation_per_province_data_extracted_per_180days.csv"
 csv_path = os.path.join(output_folder, csv_filename)
 df.to_csv(csv_path, index=False)
