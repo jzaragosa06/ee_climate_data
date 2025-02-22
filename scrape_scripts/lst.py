@@ -11,7 +11,7 @@ projectName = os.getenv("PROJECT")
 ee.Initialize(project=projectName)
 
 boundaries_path = os.path.join(os.getcwd(), "boundaries", "simplified", "simplified_philippines_province_boundaries.json")
-temporary_output_folder = os.path.join(os.getcwd(), "scraped_data", "temporary_folder_lst")
+temporary_output_folder = os.path.join(os.getcwd(), "scraped_data", "lst-temporary")
 
 output_folder = os.path.join(os.getcwd(), "scraped_data", "lst")
 os.makedirs(output_folder, exist_ok=True)
@@ -20,14 +20,12 @@ os.makedirs(temporary_output_folder, exist_ok=True)
 with open(boundaries_path, "r") as file:
     province_boundaries = json.load(file)
 
-i_date = '2022-01-01'
-f_date = '2022-01-10'
+start_date = datetime(2020, 1, 1)
+end_date = datetime(2021, 1, 1)
+date_step = timedelta(days=180)
 scale = 1000
 collection_name = 'MODIS/061/MOD11A1'
 band_name = 'LST_Day_1km'
-
-lst = ee.ImageCollection(collection_name).select(band_name, 'QC_Day').filterDate(i_date, f_date)
-
 
 def reduce_image(image, geometry):
     date = ee.Date(image.get('system:time_start')).format('YYYY-MM-dd')
@@ -42,19 +40,36 @@ def reduce_image(image, geometry):
 for province, boundary in province_boundaries.items():
     try:
         print(f"processing...{province}")
-        
         geometry = ee.Geometry.Polygon(boundary)
+        current_start = start_date
+        province_df = pd.DataFrame()    
         
-        time_series = lst.map(lambda img: reduce_image(image=img, geometry=geometry)).filter(ee.Filter.notNull([band_name]))
+        while current_start < end_date:
+            current_end = min(current_start + date_step, end_date)
+            print(f"Fetching data from {current_start.date()} to {current_end.date()} for {province}")
+
+            lst = ee.ImageCollection(collection_name).filterDate(
+                current_start.strftime('%Y-%m-%d'), current_end.strftime('%Y-%m-%d')
+            ).select(band_name)
+
+            time_series = lst.map(lambda img: reduce_image(image=img, geometry=geometry))
+            df_temp = pd.DataFrame(time_series.getInfo()['features'])
+            df_temp = pd.json_normalize(df_temp['properties'])
+            
+            if province_df.empty:
+                province_df = df_temp
+            else:
+                province_df = pd.concat([province_df, df_temp], ignore_index=True)
         
-        df = pd.DataFrame(time_series.getInfo()['features'])
-        df = pd.json_normalize(df['properties'])
-        df[band_name] = df[band_name] * 0.02 - 273.15
-    
+            current_start = current_end
         
+        province_df[band_name] = province_df[band_name] * 0.02 - 273.15
+        
+        
+        #temporary save
         csv_filename = f"lst_{province}.csv"
-        csv_path = os.path.join(output_folder, csv_filename)
-        df.to_csv(csv_path, index=False)
+        csv_path = os.path.join(temporary_output_folder, csv_filename)
+        province_df.to_csv(csv_path, index=False)
         print(f"{province} saved")
     except Exception as e:
         print(f"error: {e}")
