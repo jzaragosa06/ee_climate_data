@@ -83,12 +83,6 @@ for province, boundary in province_boundaries.items():
         else:
             province_df = province_df.rename(columns={band_name: province_name})
             df = df.merge(province_df, on="date", how="outer")
-
-        #temporary save of last
-        csv_filename = f"lst_-last-{province}.csv"
-        csv_path = os.path.join(output_folder, csv_filename)
-        df.to_csv(csv_path, index=False)
-        print(f"last-{province} saved")
     except Exception as e:
         print(f"error: {e}")
 
