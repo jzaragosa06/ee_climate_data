@@ -7,12 +7,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from scraper import authenticate, load_province_boundaries, reduce_image, process_province
-   
+
+
 def main():
     authenticate()
     
     boundaries_path = os.path.join(os.getcwd(), "boundaries", "simplified", "simplified_philippines_province_boundaries.json")
-    temporary_output_path = os.path.join(os.getcwd(), "scraped_data", "precipitation-temporary")
+    temporary_output_path = os.path.join(os.getcwd(), "scraped_data", "precipitation", "precipitation-temporary")
     output_folder = os.path.join(os.getcwd(), "scraped_data", "precipitation")
     os.makedirs(output_folder, exist_ok=True)
     os.makedirs(temporary_output_path, exist_ok=True)

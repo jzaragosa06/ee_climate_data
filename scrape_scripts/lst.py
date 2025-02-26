@@ -2,17 +2,27 @@ import ee
 import os
 import json
 import pandas as pd
+import numpy as np
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 load_dotenv()
 
 from scraper import authenticate, load_province_boundaries, reduce_image, process_province
    
+# this applies the scaling (refer to documentation)
+# this converts the integer to float
+def scale_value(x):
+    return x * 0.02
+
+def to_celcius(x):
+    return x - 273.15
+
+
 def main():
     authenticate()
     
     boundaries_path = os.path.join(os.getcwd(), "boundaries", "simplified", "simplified_philippines_province_boundaries.json")
-    temporary_output_path = os.path.join(os.getcwd(), "scraped_data", "lst-temporary")
+    temporary_output_path = os.path.join(os.getcwd(), "scraped_data", "lst", "lst-temporary")
     output_folder = os.path.join(os.getcwd(), "scraped_data", "lst")
     os.makedirs(output_folder, exist_ok=True)
     os.makedirs(temporary_output_path, exist_ok=True)
@@ -42,7 +52,10 @@ def main():
         if province_df is not None:
             df = province_df if df.empty else df.merge(province_df, on="date", how="outer")
     
-    
+    # scale and to celcius
+    numeric_cols = df.select_dtypes(include=[np.number]).columns
+    df[numeric_cols] = df[numeric_cols].apply(scale_value)
+    df[numeric_cols] = df[numeric_cols].apply(to_celcius)
     
     csv_filename = "lst_per_province.csv"
     csv_path = os.path.join(output_folder, csv_filename)
