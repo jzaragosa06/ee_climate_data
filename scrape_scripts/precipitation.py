@@ -42,8 +42,9 @@ def main():
         
         if province_df is not None:
             df = province_df if df.empty else df.merge(province_df, on="date", how="outer")
-    
-    
+
+    # arrange. ensure that date appear first
+    df = df.reindex(columns=["date"] + [col for col in df.columns if col != "date"])
     
     csv_filename = "precipitation_per_province.csv"
     csv_path = os.path.join(output_folder, csv_filename)

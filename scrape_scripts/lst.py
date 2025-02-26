@@ -57,6 +57,9 @@ def main():
     df[numeric_cols] = df[numeric_cols].apply(scale_value)
     df[numeric_cols] = df[numeric_cols].apply(to_celcius)
     
+    # arrange. ensure that date appear first
+    df = df.reindex(columns=["date"] + [col for col in df.columns if col != "date"])
+    
     csv_filename = "lst_per_province.csv"
     csv_path = os.path.join(output_folder, csv_filename)
     df.to_csv(csv_path, index=False)
