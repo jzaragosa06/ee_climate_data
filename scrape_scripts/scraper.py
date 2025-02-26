@@ -53,7 +53,7 @@ def process_province(province, boundary, start_date, end_date, date_step, scale,
             province_df = df_temp if province_df.empty else pd.concat([province_df, df_temp], ignore_index=True)
             current_start = current_end
         
-        csv_filename = f"lst_{province}.csv"
+        csv_filename = f"{province}.csv"
         csv_path = os.path.join(temporary_output_path, csv_filename)
         province_df.to_csv(csv_path, index=False)
         print(f"{province} saved")
