@@ -29,9 +29,9 @@ def main():
     
     province_boundaries = load_province_boundaries(path=boundaries_path)
     
-    start_date = datetime(2020, 1, 1)
-    end_date = datetime(2020, 3, 1)
-    date_step = timedelta(days=50)
+    start_date = datetime(2002, 2, 24)
+    end_date = datetime(2025, 2, 1)
+    date_step = timedelta(days=180)
     scale = 1000
     collection_name = 'MODIS/061/MOD11A1'
     band_name = 'LST_Day_1km'

@@ -20,9 +20,9 @@ def main():
     
     province_boundaries = load_province_boundaries(path=boundaries_path)
     
-    start_date = datetime(2020, 1, 1)
-    end_date = datetime(2020, 3, 1)
-    date_step = timedelta(days=50)
+    start_date = datetime(2008, 1, 1)
+    end_date = datetime(2025, 2, 20)
+    date_step = timedelta(days=180)
     scale = 55500
     collection_name = 'NOAA/CPC/Precipitation'
     band_name = 'precipitation'
